@@ -72,7 +72,12 @@ class ORM
         try {
             $queryFinal = $this->query;
             $consulta = Conexion::obtener_conexion()->prepare($queryFinal);
-            return $consulta->execute();
+            if ($consulta->execute()) {
+                $data = $consulta->fetch(PDO::FETCH_ASSOC);
+            }else {
+                $data = [];
+            }
+            return $data;
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
             return false;

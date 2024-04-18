@@ -1,6 +1,7 @@
 <?php
 
 namespace config;
+use controller\Usuarios;
 
 class Config
 {
@@ -9,24 +10,27 @@ class Config
     public const DEP_CSS = self::SERVER . "public/css/";
     public const DEP_JS = self::SERVER . "public/js/";
 
-    public const DIRECTORIO = array(
-        'home' => 'view/home',
-        'login' => 'view/login/login',
-        'sigin' => 'view/sigin/sigin',
-        'logout' => 'view/logout/logout',
-        'validarRegistro' => 'view/sigin/validarRegistro',
-        'validarLogin' => 'view/login/validarLogin',
-        'error' => 'view/error'
-    );
+    public function __construct()
+    {
+        define('DIRECTORIO', array(
+            'home' => 'view/home',
+            'login' => 'view/login/login',
+            'sigin' => 'view/sigin/sigin',
+            'logout' => 'view/logout/logout',
+            'validarRegistro' => 'view/sigin/validarRegistro',
+            'validarLogin' => ['controller' => 'Usuarios', 'method' => 'iniciarSesion'],
+            'error' => 'view/error'
+        ));
+    }
 
-    public static function iniciarSesion()
+    public function iniciarSesion()
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
     }
 
-    public static function cerrarSesion()
+    public function cerrarSesion()
     {
         self::iniciarSesion();
         $_SESSION = array();
@@ -34,7 +38,7 @@ class Config
         Config::redirigir('login');
     }
 
-    public static function verificarSesion()
+    public function verificarSesion()
     {
         self::iniciarSesion();
         if (!isset($_SESSION['usuario'])) {
@@ -43,7 +47,7 @@ class Config
         }
     }
 
-    public static function sesionIniciada()
+    public function sesionIniciada()
     {
         self::iniciarSesion();
         if (isset($_SESSION['usuario'])) {
@@ -52,7 +56,7 @@ class Config
         }
     }
 
-    public static function vista()
+    public function vista()
     {
         self::iniciarSesion();
 
@@ -64,29 +68,35 @@ class Config
             self::sesionIniciada();
         }
 
-        if (array_key_exists($vista, self::DIRECTORIO)) {
-            require_once self::DIRECTORIO[$vista] . '.view.php';
+        if (array_key_exists($vista, DIRECTORIO)) {
+            if (!is_array(DIRECTORIO[$vista])) {
+                require_once DIRECTORIO[$vista] . '.view.php';
+            }else {
+                $controlador = DIRECTORIO[$vista];
+                $controlador = new $controlador['controller']();
+                DIRECTORIO[$vista]['method']();
+            }
         } else {
-            require_once self::DIRECTORIO['error'] . '.view.php';
+            require_once DIRECTORIO['error'] . '.view.php';
         }
     }
 
-    public static function dep_css($archivo)
+    public function dep_css($archivo)
     {
         return self::DEP_CSS . $archivo . '.css';
     }
 
-    public static function dep_png($png)
+    public function dep_png($png)
     {
         return self::DEP_IMG . $png . '.png';
     }
 
-    public static function dep_js($archivo)
+    public function dep_js($archivo)
     {
         return self::DEP_JS . $archivo . '.js';
     }
 
-    public static function redirigir($ruta)
+    public function redirigir($ruta)
     {
         echo '
         <script>
