@@ -10,7 +10,7 @@ class Personas
     public static function obtener_datos()
     {
         $persona = new TablaPersona();
-        echo json_encode($persona->consulta()-> all());
+        echo json_encode($persona->consulta()->where('nombre', 'Conta pesos')->all());
     }
 
     public static function limite()

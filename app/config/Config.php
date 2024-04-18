@@ -13,6 +13,7 @@ class Config
         'home' => 'view/home',
         'login' => 'view/login/login',
         'sigin' => 'view/sigin/sigin',
+        'productos' => 'view/productos',
         'logout' => 'view/logout/logout',
         'validarRegistro' => 'view/sigin/validarRegistro',
         'validarLogin' => 'view/login/validarLogin',
